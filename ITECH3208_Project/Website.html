@@ -208,38 +208,90 @@
 
   <div class="nav">
     <button onclick="window.location.href='https://www.federation.edu.au/'">← Back to University Page</button>
-    <label for="start">Start</label>
+    <label for="start">Start Location:</label>
     <select id="start">
-      <option value="">Select 📍</option>
-      <option>1N</option>
-      <option>2N</option>
-      <option>3N</option>
-      <option>1W</option>
-      <option>2W</option>
-      <option>3W</option>
-      <option>1E</option>
-      <option>2E</option>
-      <option>3E</option>
-      <option>1S</option>
-      <option>2S</option>
-      <option>3S</option>
-    </select>
+      <option value="">Select Start 📍</option>
+  <option>Aboriginal Education Centre (Building 1S, Level 1)</option>
+  <option>Bistro (Building 2N)</option>
+  <option>Bookshop (Building 4N, Level 1)</option>
+  <option>Cafeteria (Building 2N)</option>
+  <option>Centre for Gippsland Studies (Building 1E, Level 1)</option>
+  <option>CLIPP (Building 1E, Level 1)</option>
+  <option>Chaplain (Building 3N)</option>
+  <option>Clubs and Societies Space (Building 1E, Level 1)</option>
+  <option>Commercial Services Centre (Building 4N, Level 1)</option>
+  <option>Crofton Hatsell Room (Building 2W, Level 2)</option>
+  <option>Fedliving Office (Building 4N, Level 1)</option>
+  <option>GHERG (Building 4W)</option>
+  <option>Kurnai College (Building 5W/6W)</option>
+  <option>Gippsland Enterprise Centre (Building 9N)</option>
+  <option>Gippsland Centre for Arts and Design (Building 6S, Level 1)</option>
+  <option>Grounds Department (Building 5S)</option>
+  <option>Hexagon Theatre (Building 1S, Level 1)</option>
+  <option>ITS Services (Building 1E, Level 2)</option>
+  <option>Leisure Centre (Building LC)</option>
+  <option>Library (Building 1E, Level 1)</option>
+  <option>Link Meeting Room (Building 2W, Level 2)</option>
+  <option>Main Entrance (Building 1W, Level 2)</option>
+  <option>Monash Rural Health (Building 3W, Level 2)</option>
+  <option>Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)</option>
+  <option>Property and Infrastructure (Building 3W)</option>
+  <option>Quiet Space / Prayer Room (Building 1N, Level 1)</option>
+  <option>Logistics and Mail Room (Building 4N)</option>
+  <option>Research and Innovation (Building 2W, Level 2)</option>
+  <option>Student Experience (Building 3N)</option>
+  <option>Student HQ (Building 1S, Level 2, Room 203)</option>
+  <option>Student Lounge (Building 3N)</option>
+  <option>Student Residences – Hall A (HA)</option>
+  <option>Student Residences – Hall B (HB)</option>
+  <option>North Residences (Building 7N)</option>
+  <option>South Residences (South Res)</option>
+  <option>West Residences (West Res)</option>
+  <option>Student Senate Office (Building 3N)</option>
+  <option>Switchback Gallery (Building 6S)</option>
+</select>
     <label for="destination">Destination</label>
     <select id="destination">
-      <option value="">Select 📌</option>
-      <option>1N</option>
-      <option>2N</option>
-      <option>3N</option>
-      <option>1W</option>
-      <option>2W</option>
-      <option>3W</option>
-      <option>1E</option>
-      <option>2E</option>
-      <option>3E</option>
-      <option>1S</option>
-      <option>2S</option>
-      <option>3S</option>
-    </select>
+        <option value="">Select Destination 📌</option>
+  <option>Aboriginal Education Centre (Building 1S, Level 1)</option>
+  <option>Bistro (Building 2N)</option>
+  <option>Bookshop (Building 4N, Level 1)</option>
+  <option>Cafeteria (Building 2N)</option>
+  <option>Centre for Gippsland Studies (Building 1E, Level 1)</option>
+  <option>CLIPP (Building 1E, Level 1)</option>
+  <option>Chaplain (Building 3N)</option>
+  <option>Clubs and Societies Space (Building 1E, Level 1)</option>
+  <option>Commercial Services Centre (Building 4N, Level 1)</option>
+  <option>Crofton Hatsell Room (Building 2W, Level 2)</option>
+  <option>Fedliving Office (Building 4N, Level 1)</option>
+  <option>GHERG (Building 4W)</option>
+  <option>Kurnai College (Building 5W/6W)</option>
+  <option>Gippsland Enterprise Centre (Building 9N)</option>
+  <option>Gippsland Centre for Arts and Design (Building 6S, Level 1)</option>
+  <option>Grounds Department (Building 5S)</option>
+  <option>Hexagon Theatre (Building 1S, Level 1)</option>
+  <option>ITS Services (Building 1E, Level 2)</option>
+  <option>Leisure Centre (Building LC)</option>
+  <option>Library (Building 1E, Level 1)</option>
+  <option>Link Meeting Room (Building 2W, Level 2)</option>
+  <option>Main Entrance (Building 1W, Level 2)</option>
+  <option>Monash Rural Health (Building 3W, Level 2)</option>
+  <option>Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)</option>
+  <option>Property and Infrastructure (Building 3W)</option>
+  <option>Quiet Space / Prayer Room (Building 1N, Level 1)</option>
+  <option>Logistics and Mail Room (Building 4N)</option>
+  <option>Research and Innovation (Building 2W, Level 2)</option>
+  <option>Student Experience (Building 3N)</option>
+  <option>Student HQ (Building 1S, Level 2, Room 203)</option>
+  <option>Student Lounge (Building 3N)</option>
+  <option>Student Residences – Hall A (HA)</option>
+  <option>Student Residences – Hall B (HB)</option>
+  <option>North Residences (Building 7N)</option>
+  <option>South Residences (South Res)</option>
+  <option>West Residences (West Res)</option>
+  <option>Student Senate Office (Building 3N)</option>
+  <option>Switchback Gallery (Building 6S)</option>
+</select>
     <button onclick="generateRoute()">Search</button>
     <span class="icon-button" onclick="toggleFilters()">䷀ Filters</span>
   </div>
