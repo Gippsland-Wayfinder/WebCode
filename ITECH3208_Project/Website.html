@@ -308,20 +308,25 @@
 
       <label for="direction">Filter by Direction</label>
       <select id="direction">
-        <option>North (N)</option>
-        <option>East (E)</option>
-        <option>South (S)</option>
-        <option>West (W)</option>
-      </select>
+  <option value="">None</option>
+  <option value="N">North (N)</option>
+  <option value="E">East (E)</option>
+  <option value="S">South (S)</option>
+  <option value="W">West (W)</option>
+</select>
+
 
       <label for="department">Filter by Department</label>
       <select id="department">
+        <option>None</option>
         <option>Institue of Education, Arts, and Community</option>
         <option>Intitue of Health and Wellbeing</option>
         <option>Institute of Innovation, Sciece and Sustainability</option>
       </select>
 
-      <button>Apply</button>
+      <button id="applyFiltersBtn">Apply</button>
+      <button id="clearFiltersBtn" style="margin-top: 10px; background-color: #6b7280;">Clear Filters</button>
+
     </div>
   </div>
 
@@ -366,5 +371,92 @@
     This is out project ITECH3208
     */
   </script>
+  <script>
+  const buildingOptions = [
+    { name: "Aboriginal Education Centre (Building 1S, Level 1)", direction: "S" },
+    { name: "Bistro (Building 2N)", direction: "N" },
+    { name: "Bookshop (Building 4N, Level 1)", direction: "N" },
+    { name: "Cafeteria (Building 2N)", direction: "N" },
+    { name: "Centre for Gippsland Studies (Building 1E, Level 1)", direction: "E" },
+    { name: "CLIPP (Building 1E, Level 1)", direction: "E" },
+    { name: "Chaplain (Building 3N)", direction: "N" },
+    { name: "Clubs and Societies Space (Building 1E, Level 1)", direction: "E" },
+    { name: "Commercial Services Centre (Building 4N, Level 1)", direction: "N" },
+    { name: "Crofton Hatsell Room (Building 2W, Level 2)", direction: "W" },
+    { name: "Fedliving Office (Building 4N, Level 1)", direction: "N" },
+    { name: "GHERG (Building 4W)", direction: "W" },
+    { name: "Kurnai College (Building 5W/6W)", direction: "W" },
+    { name: "Gippsland Enterprise Centre (Building 9N)", direction: "N" },
+    { name: "Gippsland Centre for Arts and Design (Building 6S, Level 1)", direction: "S" },
+    { name: "Grounds Department (Building 5S)", direction: "S" },
+    { name: "Hexagon Theatre (Building 1S, Level 1)", direction: "S" },
+    { name: "ITS Services (Building 1E, Level 2)", direction: "E" },
+    { name: "Leisure Centre (Building LC)", direction: "C" },
+    { name: "Library (Building 1E, Level 1)", direction: "E" },
+    { name: "Link Meeting Room (Building 2W, Level 2)", direction: "W" },
+    { name: "Main Entrance (Building 1W, Level 2)", direction: "W" },
+    { name: "Monash Rural Health (Building 3W, Level 2)", direction: "W" },
+    { name: "Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)", direction: "N" },
+    { name: "Property and Infrastructure (Building 3W)", direction: "W" },
+    { name: "Quiet Space / Prayer Room (Building 1N, Level 1)", direction: "N" },
+    { name: "Logistics and Mail Room (Building 4N)", direction: "N" },
+    { name: "Research and Innovation (Building 2W, Level 2)", direction: "W" },
+    { name: "Student Experience (Building 3N)", direction: "N" },
+    { name: "Student HQ (Building 1S, Level 2, Room 203)", direction: "S" },
+    { name: "Student Lounge (Building 3N)", direction: "N" },
+    { name: "Student Residences – Hall A (HA)", direction: "N" },
+    { name: "Student Residences – Hall B (HB)", direction: "N" },
+    { name: "North Residences (Building 7N)", direction: "N" },
+    { name: "South Residences (South Res)", direction: "S" },
+    { name: "West Residences (West Res)", direction: "W" },
+    { name: "Student Senate Office (Building 3N)", direction: "N" },
+    { name: "Switchback Gallery (Building 6S)", direction: "S" },
+  ];
+
+  const startSelect = document.getElementById("start");
+  const destSelect = document.getElementById("destination");
+  const directionSelect = document.getElementById("direction");
+  const applyBtn = document.getElementById("applyFiltersBtn");
+  const clearBtn = document.getElementById("clearFiltersBtn");
+
+  function populateOptions(selectElement, options) {
+    selectElement.innerHTML = '<option value="">Select</option>';
+    options.forEach(opt => {
+      const option = document.createElement("option");
+      option.textContent = opt.name;
+      option.value = opt.name;
+      selectElement.appendChild(option);
+    });
+  }
+
+  function applyFilters() {
+    const selectedDirection = directionSelect.value;
+
+    if (!selectedDirection) {
+      // If no direction selected, do not filter
+      return;
+    }
+
+    const filtered = buildingOptions.filter(b => b.direction === selectedDirection);
+    populateOptions(startSelect, filtered);
+    populateOptions(destSelect, filtered);
+  }
+
+  function clearFilters() {
+    directionSelect.value = "";
+    populateOptions(startSelect, buildingOptions);
+    populateOptions(destSelect, buildingOptions);
+  }
+
+  applyBtn.addEventListener("click", applyFilters);
+  clearBtn.addEventListener("click", clearFilters);
+
+  window.onload = () => {
+    populateOptions(startSelect, buildingOptions);
+    populateOptions(destSelect, buildingOptions);
+  };
+</script>
+
+
 </body>
 </html>
