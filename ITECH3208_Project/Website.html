@@ -297,11 +297,6 @@
     <span class="icon-button" onclick="toggleFilters()">䷀ Filters</span>
   </div>
 
-  <div class="map-container">
-    <img id="routeImage" src="PlainMap.jpeg" alt="Campus Map" />
-    <div id="routeDescription" class="route-description" style="display: none;"></div>
-    <button id="endButton" class="end-button" style="display: none;" onclick="endRoute()">End Route</button>
-
     <div class="filters-popup" id="filtersPopup">
       <button class="close-btn" onclick="toggleFilters()">&times;</button>
       <h3>Filters</h3>
@@ -314,7 +309,6 @@
   <option value="S">South (S)</option>
   <option value="W">West (W)</option>
 </select>
-
 
       <label for="department">Filter by Department</label>
       <select id="department">
@@ -458,5 +452,71 @@
 </script>
 
 
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Federation University Gippsland Campus Live GPS</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0; padding: 0;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize map centered on Federation University Gippsland campus
+    const map = L.map('map').setView([-38.3120, 146.4170], 16);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Variables to hold user's marker and accuracy circle
+    let userMarker, accuracyCircle;
+
+    // Start watching user's location and update in real time
+    map.locate({ watch: true, setView: true, maxZoom: 17 });
+
+    // When location found or updated
+    map.on('locationfound', function(e) {
+      const radius = e.accuracy;
+
+      // If marker exists, update position, else create it
+      if (!userMarker) {
+        userMarker = L.marker(e.latlng).addTo(map).bindPopup("You are here").openPopup();
+      } else {
+        userMarker.setLatLng(e.latlng);
+      }
+
+      // If accuracy circle exists, update position and radius, else create it
+      if (!accuracyCircle) {
+        accuracyCircle = L.circle(e.latlng, { radius }).addTo(map);
+      } else {
+        accuracyCircle.setLatLng(e.latlng);
+        accuracyCircle.setRadius(radius);
+      }
+    });
+
+    // On GPS error
+    map.on('locationerror', function(e) {
+      alert("GPS error: " + e.message);
+    });
+  </script>
 </body>
 </html>
