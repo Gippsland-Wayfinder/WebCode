@@ -479,43 +479,33 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    // Initialize map centered on Federation University Gippsland campus
-    const map = L.map('map').setView([-38.3120, 146.4170], 16);
+    const map = L.map('map').setView([-38.3126, 146.4280], 18);
 
-    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Variables to hold user's marker and accuracy circle
+    const imageUrl = 'churchill floor plan.png';
+    const imageBounds = [[-38.30949572342486, 146.42354965209964], [-38.31569157400466, 146.43286228179934]];
+    L.imageOverlay(imageUrl, imageBounds).addTo(map);
+
+    // GPS tracking with floor plan integration
     let userMarker, accuracyCircle;
+    map.locate({ watch: true, setView: true, maxZoom: 20 });
 
-    // Start watching user's location and update in real time
-    map.locate({ watch: true, setView: true, maxZoom: 17 });
-
-    // When location found or updated
-    map.on('locationfound', function(e) {
-      const radius = e.accuracy;
-
-      // If marker exists, update position, else create it
+    map.on("locationfound", function (e) {
       if (!userMarker) {
         userMarker = L.marker(e.latlng).addTo(map).bindPopup("You are here").openPopup();
+        accuracyCircle = L.circle(e.latlng, { radius: e.accuracy }).addTo(map);
       } else {
         userMarker.setLatLng(e.latlng);
-      }
-
-      // If accuracy circle exists, update position and radius, else create it
-      if (!accuracyCircle) {
-        accuracyCircle = L.circle(e.latlng, { radius }).addTo(map);
-      } else {
         accuracyCircle.setLatLng(e.latlng);
-        accuracyCircle.setRadius(radius);
+        accuracyCircle.setRadius(e.accuracy);
       }
     });
 
-    // On GPS error
-    map.on('locationerror', function(e) {
-      alert("GPS error: " + e.message);
+    map.on("locationerror", function (e) {
+      alert("Location error: " + e.message);
     });
   </script>
 </body>
