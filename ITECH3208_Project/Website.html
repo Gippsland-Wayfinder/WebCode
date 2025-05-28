@@ -115,18 +115,23 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    .filters-popup {
-      position: absolute;
-      top: 40px;
-      right: 40px;
-      background-color: white;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      padding: 24px;
-      width: 300px;
-      z-index: 10;
-      display: none;
-    }
+     .filters-popup {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  width: 300px;
+  z-index: 10000; 
+  display: none;
+}
+
+.map-container img {
+  z-index: 1; 
+  position: relative;
+}
 
     .filters-popup h3 {
       margin-bottom: 12px;
