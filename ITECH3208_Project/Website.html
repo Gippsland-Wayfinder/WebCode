@@ -115,29 +115,25 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-     .filters-popup {
-  position: absolute;
-  top: 40px;
-  right: 40px;
-  background-color: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  width: 300px;
-  z-index: 10000; 
-  display: none;
-}
+    .filters-popup {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      width: 300px;
+      z-index: 100000;
+      display: none;
+    }
 
-.map-container img {
-  z-index: 1; 
-  position: relative;
-}
-
-      .filters-popup h3 {
+    .filters-popup h3 {
       margin-bottom: 12px;
       font-size: 18px;
       font-weight: 600;
     }
+
     .filters-popup label {
       display: block;
       margin-top: 16px;
@@ -483,34 +479,75 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map').setView([-38.3126, 146.4280], 18);
+    const southWest = L.latLng(-38.3160, 146.4230);
+const northEast = L.latLng(-38.3095, 146.4330);
+const campusBounds = L.latLngBounds(southWest, northEast);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+const map = L.map('map', {
+  maxBounds: campusBounds,
+  maxBoundsViscosity: 1.0,
+  minZoom: 17,
+  maxZoom: 20
+}).setView([-38.3126, 146.4280], 18);
+
+    
 
     const imageUrl = 'churchill floor plan.jpeg';
-    const imageBounds = [[-38.30949572342486, 146.42354965209964], [-38.31569157400466, 146.43286228179934]];
+    const imageBounds = [[-38.3095, 146.4235], [-38.3157, 146.4329]];
     L.imageOverlay(imageUrl, imageBounds).addTo(map);
 
-    // GPS tracking with floor plan integration
-    let userMarker, accuracyCircle;
+    let userMarker, accuracyCircle, headingMarker;
+
+    const arrowIcon = L.divIcon({
+      className: 'heading-arrow',
+      html: '🧭',
+      iconSize: [30, 30],
+      iconAnchor: [15, 15]
+    });
+
     map.locate({ watch: true, setView: true, maxZoom: 20 });
 
     map.on("locationfound", function (e) {
       if (!userMarker) {
         userMarker = L.marker(e.latlng).addTo(map).bindPopup("You are here").openPopup();
-        accuracyCircle = L.circle(e.latlng, { radius: e.accuracy }).addTo(map);
+        accuracyCircle = L.circle(e.latlng, {
+  radius: 5,  // much smaller than dynamic accuracy
+  color: '#007bff',
+  fillColor: '#007bff',
+  fillOpacity: 0.3
+}).addTo(map);
+
+        headingMarker = L.marker(e.latlng, { icon: arrowIcon }).addTo(map);
       } else {
         userMarker.setLatLng(e.latlng);
-        accuracyCircle.setLatLng(e.latlng);
-        accuracyCircle.setRadius(e.accuracy);
+        accuracyCircle.setLatLng(e.latlng).setRadius(e.accuracy);
+        headingMarker.setLatLng(e.latlng);
       }
     });
 
     map.on("locationerror", function (e) {
       alert("Location error: " + e.message);
     });
+
+    function handleOrientation(event) {
+      const heading = event.alpha;
+      if (heading != null && headingMarker && headingMarker.getElement()) {
+        headingMarker.getElement().style.transform = `rotate(${heading}deg)`;
+      }
+    }
+
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(permissionState => {
+          if (permissionState === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation, true);
+          }
+        })
+        .catch(console.error);
+    } else {
+      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+      window.addEventListener('deviceorientation', handleOrientation, true);
+    }
   </script>
 </body>
 </html>
