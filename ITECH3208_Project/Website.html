@@ -213,6 +213,7 @@
     <select id="start">
       <option value="">Select Start 📍</option>
   <option>Aboriginal Education Centre (Building 1S, Level 1)</option>
+  <option>Auditorium (Building 3E)</option>
   <option>Bistro (Building 2N)</option>
   <option>Bookshop (Building 4N, Level 1)</option>
   <option>Cafeteria (Building 2N)</option>
@@ -255,6 +256,7 @@
     <select id="destination">
         <option value="">Select Destination 📌</option>
   <option>Aboriginal Education Centre (Building 1S, Level 1)</option>
+  <option>Auditorium (Building 3E)</option>
   <option>Bistro (Building 2N)</option>
   <option>Bookshop (Building 4N, Level 1)</option>
   <option>Cafeteria (Building 2N)</option>
@@ -368,6 +370,7 @@
   <script>
   const buildingOptions = [
     { name: "Aboriginal Education Centre (Building 1S, Level 1)", direction: "S" },
+    { name: "Auditorium (Building 3E)", direction: "E" },
     { name: "Bistro (Building 2N)", direction: "N" },
     { name: "Bookshop (Building 4N, Level 1)", direction: "N" },
     { name: "Cafeteria (Building 2N)", direction: "N" },
@@ -483,7 +486,7 @@
 const northEast = L.latLng(-38.3095, 146.4330);
 const campusBounds = L.latLngBounds(southWest, northEast);
 
-const map = L.map('map', {
+window.map = L.map('map', {
   maxBounds: campusBounds,
   maxBoundsViscosity: 1.0,
   minZoom: 17,
