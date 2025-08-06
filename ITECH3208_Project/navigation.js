@@ -1,160 +1,189 @@
-// ========== 1. Building Coordinates ==========
+// navigation.js
+
+// Building coordinates, same as in your HTML options (adjust if needed)
 const buildingLocations = {
-  "Library (Building 1E, Level 1)": { lat: -38.3121, lng: 146.4275 },
-  "Student HQ (Building 1S, Level 2, Room 203)": { lat: -38.3130, lng: 146.4288 },
-  "Bookshop (Building 4N, Level 1)": { lat: -38.3113, lng: 146.4267 },
-  "ITS Services (Building 1E, Level 2)": { lat: -38.3122, lng: 146.4276 },
-  "Bistro (Building 2N)": { lat: -38.3114, lng: 146.4281 },
-  "Hexagon Theatre (Building 1S, Level 1)": { lat: -38.3133, lng: 146.4287 },
-  "Student Lounge (Building 3N)": { lat: -38.3117, lng: 146.4284 },
-  "Switchback Gallery (Building 6S)": { lat: -38.3142, lng: 146.4282 },
-  "Science Labs (Building 1N)": { lat: -38.3128, lng: 146.4272 },
-  "Engineering (Building 2S)": { lat: -38.3135, lng: 146.4269 },
-  "Postgrad Lounge (Building 3S)": { lat: -38.3138, lng: 146.4280 }
+  "Aboriginal Education Centre (Building 1S, Level 1)": { lat: -38.31215, lng: 146.42988 },
+  "Auditorium (Building 3E)": { lat: -38.31093, lng: 146.43044 },
+  "Bistro (Building 2N)": { lat: -38.31136, lng: 146.42903 },
+  "Bookshop (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+  "Cafeteria (Building 2N)": { lat: -38.31136, lng: 146.42903 },
+  "Centre for Gippsland Studies (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "CLIPP (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "Chaplain (Building 3N)": { lat: -38.31101, lng: 146.42898 },
+  "Clubs and Societies Space (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "Commercial Services Centre (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+  "Crofton Hatsell Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+  "Fedliving Office (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+  "GHERG (Building 4W)": { lat: -38.31250, lng: 146.42779 },
+  "Kurnai College (Building 5W/6W)": { lat: -38.31223, lng: 146.42689 },
+  "Gippsland Enterprise Centre (Building 9N)": { lat: -38.30931, lng: 146.42564 },
+  "Gippsland Centre for Arts and Design (Building 6S, Level 1)": { lat: -38.31353, lng: 146.43143 },
+  "Grounds Department (Building 5S)": { lat: -38.31368, lng: 146.43082 },
+  "Hexagon Theatre (Building 1S, Level 1)": { lat: -38.31218, lng: 146.42991 },
+  "ITS Services (Building 1E, Level 2)": { lat: -38.31101, lng: 146.42939 },
+  "Leisure Centre (Building LC)": { lat: -38.31146, lng: 146.42514 },
+  "Library (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "Link Meeting Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+  "Main Entrance (Building 1W, Level 2)": { lat: -38.31196, lng: 146.42947 },
+  "Monash Rural Health (Building 3W, Level 2)": { lat: -38.31223, lng: 146.42855 },
+  "Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)": { lat: -38.31127, lng: 146.42947 },
+  "Property and Infrastructure (Building 3W)": { lat: -38.31223, lng: 146.42855 },
+  "Quiet Space / Prayer Room (Building 1N, Level 1)": { lat: -38.31167, lng: 146.42954 },
+  "Logistics and Mail Room (Building 4N)": { lat: -38.31101, lng: 146.42844 },
+  "Research and Innovation (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+  "Student Experience (Building 3N)": { lat: -38.31100, lng: 146.42898 },
+  "Student HQ (Building 1S, Level 2, Room 203)": { lat: -38.31218, lng: 146.42991 },
+  "Student Lounge (Building 3N)": { lat: -38.31101, lng: 146.42898 },
+  "Student Residences – Hall A (HA)": { lat: -38.31111, lng: 146.42597 },
+  "Student Residences – Hall B (HB)": { lat: -38.31314, lng: 146.42653 },
+  "North Residences (Building 7N)": { lat: -38.31042, lng: 146.42880 },
+  "South Residences (South Res)": { lat: -38.31496, lng: 146.42883 },
+  "West Residences (West Res)": { lat: -38.31451, lng: 146.42576 },
+  "Student Senate Office (Building 3N)": { lat: -38.31100, lng: 146.42897 },
+  "Switchback Gallery (Building 6S)": { lat: -38.31353, lng: 146.43143 },
 };
 
-// ========== 2. Path Graph ==========
-const pathGraph = {
-  A: { coords: [-38.3114, 146.4275], neighbors: { B: 40, C: 70 } },
-  B: { coords: [-38.3122, 146.4275], neighbors: { A: 40, D: 60 } },
-  C: { coords: [-38.3115, 146.4282], neighbors: { A: 70, D: 50 } },
-  D: { coords: [-38.3125, 146.4282], neighbors: { B: 60, C: 50, E: 40 } },
-  E: { coords: [-38.3133, 146.4288], neighbors: { D: 40, F: 60 } },
-  F: { coords: [-38.3135, 146.4269], neighbors: { E: 60 } }
-};
+// Haversine formula to calculate distance (meters)
+function haversineDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const toRad = x => (x * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2) ** 2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
-// ========== 3. Building-to-Node Mapping ==========
-const buildingToNode = {
-  "Bookshop (Building 4N, Level 1)": "A",
-  "ITS Services (Building 1E, Level 2)": "B",
-  "Bistro (Building 2N)": "C",
-  "Student Lounge (Building 3N)": "C",
-  "Library (Building 1E, Level 1)": "B",
-  "Hexagon Theatre (Building 1S, Level 1)": "E",
-  "Student HQ (Building 1S, Level 2, Room 203)": "E",
-  "Switchback Gallery (Building 6S)": "E",
-  "Science Labs (Building 1N)": "B",
-  "Engineering (Building 2S)": "F",
-  "Postgrad Lounge (Building 3S)": "E"
-};
+// Build graph: connect buildings within threshold meters
+function buildGraph(buildings, threshold = 80) {
+  const graph = {};
+  const names = Object.keys(buildings);
+  for (let i = 0; i < names.length; i++) {
+    const from = names[i];
+    graph[from] = {};
+    for (let j = 0; j < names.length; j++) {
+      if (i === j) continue;
+      const to = names[j];
+      const dist = haversineDistance(
+        buildings[from].lat, buildings[from].lng,
+        buildings[to].lat, buildings[to].lng
+      );
+      if (dist <= threshold) {
+        graph[from][to] = dist;
+      }
+    }
+  }
+  return graph;
+}
 
-// ========== 4. Dijkstra's Algorithm ==========
-function dijkstra(startNode, endNode) {
+// Dijkstra's shortest path
+function dijkstra(graph, start, end) {
   const distances = {};
   const previous = {};
-  const unvisited = new Set(Object.keys(pathGraph));
+  const queue = new Set(Object.keys(graph));
 
-  Object.keys(pathGraph).forEach(node => {
+  for (let node of queue) {
     distances[node] = Infinity;
-  });
-  distances[startNode] = 0;
+    previous[node] = null;
+  }
+  distances[start] = 0;
 
-  while (unvisited.size) {
-    let closest = null;
-    for (let node of unvisited) {
-      if (closest === null || distances[node] < distances[closest]) {
-        closest = node;
+  while (queue.size > 0) {
+    let currentNode = null;
+    let minDist = Infinity;
+    for (let node of queue) {
+      if (distances[node] < minDist) {
+        minDist = distances[node];
+        currentNode = node;
       }
     }
 
-    if (closest === endNode) break;
-    unvisited.delete(closest);
+    if (currentNode === end || minDist === Infinity) break;
+    queue.delete(currentNode);
 
-    const neighbors = pathGraph[closest].neighbors;
-    for (let neighbor in neighbors) {
-      const alt = distances[closest] + neighbors[neighbor];
+    for (const neighbor in graph[currentNode]) {
+      if (!queue.has(neighbor)) continue;
+      const alt = distances[currentNode] + graph[currentNode][neighbor];
       if (alt < distances[neighbor]) {
         distances[neighbor] = alt;
-        previous[neighbor] = closest;
+        previous[neighbor] = currentNode;
       }
     }
   }
 
+  // Reconstruct path
   const path = [];
-  let current = endNode;
-  while (current) {
-    path.unshift(current);
-    current = previous[current];
+  let u = end;
+  while (u) {
+    path.unshift(u);
+    u = previous[u];
   }
-  return path.map(node => pathGraph[node].coords);
+  if (path[0] !== start) return null;
+  return path;
 }
 
-// ========== 5. Route Drawing ==========
-function drawRoute(startBuilding, endBuilding) {
-  const startNode = buildingToNode[startBuilding];
-  const endNode = buildingToNode[endBuilding];
+// Wait for DOM and Leaflet to be ready
+window.addEventListener('load', () => {
+  // Grab your existing map
+  const map = window.map; // You created map as global in your HTML script, right?
 
-  if (!startNode || !endNode) {
-    alert("No path found for selected buildings.");
+  if (!map) {
+    console.error('Map not found! Make sure your map is global in HTML.');
     return;
   }
 
-  const routeCoords = dijkstra(startNode, endNode);
+  // Build graph (80m threshold)
+  const pathGraph = buildGraph(buildingLocations, 80);
 
-  if (typeof L === 'undefined') {
-    console.error("Leaflet map not found.");
-    return;
+  // Add building markers to map for visual (optional)
+  const markers = {};
+  for (const [name, coords] of Object.entries(buildingLocations)) {
+    markers[name] = L.marker([coords.lat, coords.lng]).addTo(map).bindPopup(name);
   }
 
-  if (window.currentRouteLine) {
-    map.removeLayer(window.currentRouteLine);
-  }
+  // Track currently drawn route so we can remove it
+  let routeLine = null;
 
-  window.currentRouteLine = L.polyline(routeCoords, {
-    color: 'red',
-    weight: 6,
-    opacity: 0.8
-  }).addTo(map);
+  // Handle the "Search" button click
+  document.querySelector('.nav button[onclick="generateRoute()"]').addEventListener('click', e => {
+    e.preventDefault();
+    const start = document.getElementById('start').value;
+    const end = document.getElementById('destination').value;
 
-  map.fitBounds(window.currentRouteLine.getBounds());
-}
-
-// ========== 6. UI Integration ==========
-document.getElementById("start").addEventListener("change", maybeDrawRoute);
-document.getElementById("destination").addEventListener("change", maybeDrawRoute);
-
-function maybeDrawRoute() {
-  const start = document.getElementById("start").value;
-  const end = document.getElementById("destination").value;
-  if (start && end) {
-    drawRoute(start, end);
-  }
-}
-
-// ========== 7. Geolocation Option ==========
-function findNearestNode(coords) {
-  let nearest = null;
-  let minDist = Infinity;
-  for (let node in pathGraph) {
-    const [lat, lng] = pathGraph[node].coords;
-    const dist = Math.sqrt(
-      Math.pow(coords[0] - lat, 2) + Math.pow(coords[1] - lng, 2)
-    );
-    if (dist < minDist) {
-      minDist = dist;
-      nearest = node;
+    if (!start || !end) {
+      alert('Please select both start and destination.');
+      return;
     }
-  }
-  return nearest;
-}
-
-function useMyLocationAsStart(endBuilding) {
-  navigator.geolocation.getCurrentPosition(position => {
-    const userCoords = [position.coords.latitude, position.coords.longitude];
-    const closestNode = findNearestNode(userCoords);
-    const endNode = buildingToNode[endBuilding];
-    const routeCoords = dijkstra(closestNode, endNode);
-
-    if (window.currentRouteLine) {
-      map.removeLayer(window.currentRouteLine);
+    if (start === end) {
+      alert('Start and destination are the same.');
+      return;
     }
 
-    window.currentRouteLine = L.polyline(routeCoords, {
-      color: 'blue',
-      weight: 6,
-      opacity: 0.8
-    }).addTo(map);
+    const path = dijkstra(pathGraph, start, end);
+    if (!path) {
+      alert('No route found between the selected buildings.');
+      return;
+    }
 
-    map.fitBounds(window.currentRouteLine.getBounds());
+    // Convert path to latlng for polyline
+    const latlngs = path.map(name => [buildingLocations[name].lat, buildingLocations[name].lng]);
+
+    // Remove old route line if present
+    if (routeLine) {
+      map.removeLayer(routeLine);
+    }
+
+    // Draw new route
+    routeLine = L.polyline(latlngs, { color: 'blue', weight: 5 }).addTo(map);
+
+    // Zoom map to route bounds
+    map.fitBounds(routeLine.getBounds());
+
+    // Open popup on start marker
+    if (markers[start]) markers[start].openPopup();
+  });
+});ds(window.currentRouteLine.getBounds());
   });
 }
+
