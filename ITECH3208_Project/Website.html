@@ -327,45 +327,87 @@
   </div>
 
   <script>
-    function toggleFilters() {
-      const popup = document.getElementById("filtersPopup");
-      popup.style.display = popup.style.display === "block" ? "none" : "block";
-    }
+  const buildingLocations = {
+  "Aboriginal Education Centre (Building 1S, Level 1)": { lat: -38.31215, lng: 146.42988 },
+  "Auditorium (Building 3E)": { lat: -38.31093, lng: 146.43044 },
+  "Bistro (Building 2N)": { lat: -38.31136, lng: 146.42903 },
+  "Bookshop (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+  "Cafeteria (Building 2N)": { lat: -38.31136, lng: 146.42903 },
+  "Centre for Gippsland Studies (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "CLIPP (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "Chaplain (Building 3N)": { lat: -38.31101, lng: 146.42898 },
+  "Clubs and Societies Space (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "Commercial Services Centre (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+  "Crofton Hatsell Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+  "Fedliving Office (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+  "GHERG (Building 4W)": { lat: -38.31250, lng: 146.42779 },
+  "Kurnai College (Building 5W/6W)": { lat: -38.31223, lng: 146.42689 },
+  "Gippsland Enterprise Centre (Building 9N)": { lat: -38.30931, lng: 146.42564 },
+  "Gippsland Centre for Arts and Design (Building 6S, Level 1)": { lat: -38.31353, lng: 146.43143 },
+  "Grounds Department (Building 5S)": { lat: -38.31368, lng: 146.43082 },
+  "Hexagon Theatre (Building 1S, Level 1)": { lat: -38.31218, lng: 146.42991 },
+  "ITS Services (Building 1E, Level 2)": { lat: -38.31101, lng: 146.42939 },
+  "Leisure Centre (Building LC)": { lat: -38.31146, lng: 146.42514 },
+  "Library (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "Link Meeting Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+  "Main Entrance (Building 1W, Level 2)": { lat: -38.31196, lng: 146.42947 },
+  "Monash Rural Health (Building 3W, Level 2)": { lat: -38.31223, lng: 146.42855 },
+  "Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)": { lat: -38.31127, lng: 146.42947 },
+  "Property and Infrastructure (Building 3W)": { lat: -38.31223, lng: 146.42855 },
+  "Quiet Space / Prayer Room (Building 1N, Level 1)": { lat: -38.31167, lng: 146.42954 },
+  "Logistics and Mail Room (Building 4N)": { lat: -38.31101, lng: 146.42844 },
+  "Research and Innovation (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+  "Student Experience (Building 3N)": { lat: -38.31100, lng: 146.42898 },
+  "Student HQ (Building 1S, Level 2, Room 203)": { lat: -38.31218, lng: 146.42991 },
+  "Student Lounge (Building 3N)": { lat: -38.31101, lng: 146.42898 },
+  "Student Residences – Hall A (HA)": { lat: -38.31111, lng: 146.42597 },
+  "Student Residences – Hall B (HB)": { lat: -38.31314, lng: 146.42653 },
+  "North Residences (Building 7N)": { lat: -38.31042, lng: 146.42880 },
+  "South Residences (South Res)": { lat: -38.31496, lng: 146.42883 },
+  "West Residences (West Res)": { lat: -38.31451, lng: 146.42576 },
+  "Student Senate Office (Building 3N)": { lat: -38.31100, lng: 146.42897 },
+  "Switchback Gallery (Building 6S)": { lat: -38.31353, lng: 146.43143 },
+};
 
-    function generateRoute() {
-      const start = document.getElementById("start").value;
-      const destination = document.getElementById("destination").value;
+let currentRoute = null;
 
-      if (start && destination) {
-        const imageName = `${start}${destination}.jpeg`;
-        const routeImage = document.getElementById("routeImage");
-        routeImage.src = `routes/${imageName}`;
-        routeImage.alt = `Route from ${start} to ${destination}`;
+function generateRoute() {
+  const startName = document.getElementById("start").value;
+  const endName = document.getElementById("destination").value;
 
-        const routeDescription = document.getElementById("routeDescription");
-        routeDescription.textContent = `Start at ${start}, go to ${destination}`;
-        routeDescription.style.display = 'block';
+  if (!startName || !endName) {
+    alert("Please select both a start and destination.");
+    return;
+  }
 
-        const endButton = document.getElementById("endButton");
-        endButton.style.display = 'inline-block';
-      } else {
-        alert("Please select both a start and destination.");
-      }
-    }
+  if (!(startName in buildingLocations) || !(endName in buildingLocations)) {
+    alert("Invalid building selected.");
+    return;
+  }
 
-    function endRoute() {
-      const routeImage = document.getElementById("routeImage");
-      routeImage.src = "PlainMap.jpeg";
-      routeImage.alt = "Campus Map";
+  const start = buildingLocations[startName];
+  const end = buildingLocations[endName];
 
-      document.getElementById("routeDescription").style.display = 'none';
-      document.getElementById("endButton").style.display = 'none';
-      document.getElementById("start").value = "";
-      document.getElementById("destination").value = "";
-    }
-    /*
-    This is out project ITECH3208
-    */
+  // Clear previous route
+  if (currentRoute) {
+    map.removeLayer(currentRoute);
+  }
+
+  // Draw line on the map
+  currentRoute = L.polyline([start, end], {
+    color: 'blue',
+    weight: 5
+  }).addTo(map);
+
+  map.fitBounds(currentRoute.getBounds());
+
+  const routeDescription = document.getElementById("routeDescription");
+  if (routeDescription) {
+    routeDescription.textContent = `Showing route from "${startName}" to "${endName}".`;
+    routeDescription.style.display = 'block';
+  }
+}
+
   </script>
   <script>
   const buildingOptions = [
@@ -485,20 +527,23 @@
     const southWest = L.latLng(-38.3160, 146.4230);
 const northEast = L.latLng(-38.3095, 146.4330);
 const campusBounds = L.latLngBounds(southWest, northEast);
-
 window.map = L.map('map', {
-  maxBounds: campusBounds,
-  maxBoundsViscosity: 1.0,
-  minZoom: 17,
-  maxZoom: 20
+  // maxBounds: campusBounds,
+  // maxBoundsViscosity: 1.0,
+  // minZoom: 17,
+  // maxZoom: 20
 }).setView([-38.3126, 146.4280], 18);
 
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
 
 
+/*
     const imageUrl = 'churchill floor plan.jpeg';
     const imageBounds = [[-38.3095, 146.4235], [-38.3157, 146.4329]];
     L.imageOverlay(imageUrl, imageBounds).addTo(map);
-
+*/
     let userMarker, accuracyCircle, headingMarker;
 
     const arrowIcon = L.divIcon({
