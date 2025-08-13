@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Campus Wayfinder</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
     :root {
       --fed-blue: #00205b;
@@ -24,180 +25,176 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      height: 100vh;
     }
 
     .header {
       background-color: #fff;
-      padding: 20px;
+      padding: 12px;
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
 
     .header img {
-      height: 60px;
-      margin-bottom: 0;
-      position: absolute;
-      left: 20px;
+      height: 40px;
+      margin-right: 8px;
     }
 
     .header-title {
-      font-size: 32px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--fed-blue);
-      text-align: center;
     }
 
+    /* Mobile/Tablet default nav */
     .nav {
+      background-color: #fff;
+      width: 95%;
+      max-width: 900px;
+      margin-top: 10px;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      padding: 16px 20px;
-      background-color: var(--fed-blue);
-      color: white;
-      width: 100%;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
     }
 
-    .nav button, .nav select {
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: none;
-      font-size: 14px;
-    }
-
-    .nav button {
-      background-color: var(--fed-blue-light);
-      color: white;
-      transition: background-color 0.2s;
-    }
-
-    .nav button:hover {
-      background-color: #00153d;
+    .nav label {
+      font-size: 13px;
+      color: #555;
     }
 
     .nav select {
-      background-color: white;
-      color: #111827;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .nav button {
+      background-color: var(--fed-blue);
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .nav button:hover {
+      background-color: var(--fed-blue-light);
     }
 
     .icon-button {
-      cursor: pointer;
-      font-size: 20px;
-      padding: 6px 12px;
-      background-color: var(--fed-blue-light);
+      background-color: #f3f4f6;
+      color: #333;
+      font-size: 14px;
+      padding: 8px;
       border-radius: 8px;
-      transition: background-color 0.2s;
+      border: 1px solid #ccc;
+      text-align: center;
+      cursor: pointer;
     }
 
     .icon-button:hover {
-      background-color: #00153d;
+      background-color: #e5e7eb;
     }
 
-    .map-container {
-      position: relative;
-      padding: 20px;
-      max-width: 1200px;
+    #map {
+      flex: 1;
+      height: calc(100vh - 220px);
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
-    .map-container img {
-      width: 100%;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Desktop/Laptop layout */
+    @media (min-width: 1024px) {
+      .nav {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0;
+      }
+
+      .nav label {
+        margin: 0;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .nav select {
+        width: auto;
+        min-width: 200px;
+      }
+
+      .nav button,
+      .icon-button {
+        width: auto;
+      }
+
+      #map {
+        height: calc(100vh - 120px);
+      }
     }
 
     .filters-popup {
       position: absolute;
-      top: 40px;
-      right: 40px;
+      top: 60px;
+      right: 20px;
       background-color: white;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      padding: 24px;
-      width: 300px;
-      z-index: 100000;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      padding: 16px;
+      width: 280px;
+      z-index: 2000;
       display: none;
     }
 
     .filters-popup h3 {
-      margin-bottom: 12px;
-      font-size: 18px;
+      margin-bottom: 10px;
+      font-size: 16px;
       font-weight: 600;
     }
 
     .filters-popup label {
       display: block;
-      margin-top: 16px;
-      margin-bottom: 6px;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      font-size: 14px;
       font-weight: 500;
     }
 
     .filters-popup select,
     .filters-popup button {
       width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #d1d5db;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
       font-size: 14px;
     }
 
     .filters-popup button {
-      margin-top: 20px;
+      margin-top: 12px;
       background-color: var(--fed-blue);
       color: white;
       border: none;
       cursor: pointer;
-      transition: background-color 0.2s;
     }
 
     .filters-popup button:hover {
-      background-color: #00153d;
-    }
-
-    .close-btn {
-      width: 100%
-      position: absolute;
-      top: 10px;
-      right: 0px;
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #6b7280;
-    }
-
-    .route-description {
-      margin-top: 20px;
-      font-weight: bold;
-      background-color: #e5e7eb;
-      padding: 12px 20px;
-      border-radius: 10px;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    .end-button {
-      margin-top: 10px;
-      padding: 10px 18px;
-      background-color: #d97706;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .end-button:hover {
-      background-color: #b45309;
+      background-color: var(--fed-blue-light);
     }
   </style>
 </head>
@@ -208,127 +205,48 @@
   </div>
 
   <div class="nav">
-    <button onclick="window.location.href='https://www.federation.edu.au/'">← Back to University Page</button>
-    <label for="start">Start Location:</label>
-    <select id="start">
-      <option value="">Select Start 📍</option>
-  <option>Aboriginal Education Centre (Building 1S, Level 1)</option>
-  <option>Auditorium (Building 3E)</option>
-  <option>Bistro (Building 2N)</option>
-  <option>Bookshop (Building 4N, Level 1)</option>
-  <option>Cafeteria (Building 2N)</option>
-  <option>Centre for Gippsland Studies (Building 1E, Level 1)</option>
-  <option>CLIPP (Building 1E, Level 1)</option>
-  <option>Chaplain (Building 3N)</option>
-  <option>Clubs and Societies Space (Building 1E, Level 1)</option>
-  <option>Commercial Services Centre (Building 4N, Level 1)</option>
-  <option>Crofton Hatsell Room (Building 2W, Level 2)</option>
-  <option>Fedliving Office (Building 4N, Level 1)</option>
-  <option>GHERG (Building 4W)</option>
-  <option>Kurnai College (Building 5W/6W)</option>
-  <option>Gippsland Enterprise Centre (Building 9N)</option>
-  <option>Gippsland Centre for Arts and Design (Building 6S, Level 1)</option>
-  <option>Grounds Department (Building 5S)</option>
-  <option>Hexagon Theatre (Building 1S, Level 1)</option>
-  <option>ITS Services (Building 1E, Level 2)</option>
-  <option>Leisure Centre (Building LC)</option>
-  <option>Library (Building 1E, Level 1)</option>
-  <option>Link Meeting Room (Building 2W, Level 2)</option>
-  <option>Main Entrance (Building 1W, Level 2)</option>
-  <option>Monash Rural Health (Building 3W, Level 2)</option>
-  <option>Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)</option>
-  <option>Property and Infrastructure (Building 3W)</option>
-  <option>Quiet Space / Prayer Room (Building 1N, Level 1)</option>
-  <option>Logistics and Mail Room (Building 4N)</option>
-  <option>Research and Innovation (Building 2W, Level 2)</option>
-  <option>Student Experience (Building 3N)</option>
-  <option>Student HQ (Building 1S, Level 2, Room 203)</option>
-  <option>Student Lounge (Building 3N)</option>
-  <option>Student Residences – Hall A (HA)</option>
-  <option>Student Residences – Hall B (HB)</option>
-  <option>North Residences (Building 7N)</option>
-  <option>South Residences (South Res)</option>
-  <option>West Residences (West Res)</option>
-  <option>Student Senate Office (Building 3N)</option>
-  <option>Switchback Gallery (Building 6S)</option>
-</select>
-    <label for="destination">Destination</label>
-    <select id="destination">
-        <option value="">Select Destination 📌</option>
-  <option>Aboriginal Education Centre (Building 1S, Level 1)</option>
-  <option>Auditorium (Building 3E)</option>
-  <option>Bistro (Building 2N)</option>
-  <option>Bookshop (Building 4N, Level 1)</option>
-  <option>Cafeteria (Building 2N)</option>
-  <option>Centre for Gippsland Studies (Building 1E, Level 1)</option>
-  <option>CLIPP (Building 1E, Level 1)</option>
-  <option>Chaplain (Building 3N)</option>
-  <option>Clubs and Societies Space (Building 1E, Level 1)</option>
-  <option>Commercial Services Centre (Building 4N, Level 1)</option>
-  <option>Crofton Hatsell Room (Building 2W, Level 2)</option>
-  <option>Fedliving Office (Building 4N, Level 1)</option>
-  <option>GHERG (Building 4W)</option>
-  <option>Kurnai College (Building 5W/6W)</option>
-  <option>Gippsland Enterprise Centre (Building 9N)</option>
-  <option>Gippsland Centre for Arts and Design (Building 6S, Level 1)</option>
-  <option>Grounds Department (Building 5S)</option>
-  <option>Hexagon Theatre (Building 1S, Level 1)</option>
-  <option>ITS Services (Building 1E, Level 2)</option>
-  <option>Leisure Centre (Building LC)</option>
-  <option>Library (Building 1E, Level 1)</option>
-  <option>Link Meeting Room (Building 2W, Level 2)</option>
-  <option>Main Entrance (Building 1W, Level 2)</option>
-  <option>Monash Rural Health (Building 3W, Level 2)</option>
-  <option>Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)</option>
-  <option>Property and Infrastructure (Building 3W)</option>
-  <option>Quiet Space / Prayer Room (Building 1N, Level 1)</option>
-  <option>Logistics and Mail Room (Building 4N)</option>
-  <option>Research and Innovation (Building 2W, Level 2)</option>
-  <option>Student Experience (Building 3N)</option>
-  <option>Student HQ (Building 1S, Level 2, Room 203)</option>
-  <option>Student Lounge (Building 3N)</option>
-  <option>Student Residences – Hall A (HA)</option>
-  <option>Student Residences – Hall B (HB)</option>
-  <option>North Residences (Building 7N)</option>
-  <option>South Residences (South Res)</option>
-  <option>West Residences (West Res)</option>
-  <option>Student Senate Office (Building 3N)</option>
-  <option>Switchback Gallery (Building 6S)</option>
-</select>
+    <button onclick="window.location.href='https://www.federation.edu.au/'">← Back</button>
+
+    <label for="start">Start:</label>
+    <select id="start"></select>
+
+    <label for="destination">Destination:</label>
+    <select id="destination"></select>
+
     <button onclick="generateRoute()">Search</button>
-    <span class="icon-button" onclick="toggleFilters()">䷀ Filters</span>
+    <span class="icon-button" onclick="toggleFilters()">☰ Filters</span>
   </div>
 
-    <div class="filters-popup" id="filtersPopup">
-      <button class="close-btn" onclick="toggleFilters()">&times;</button>
-      <h3>Filters</h3>
+  <div id="map"></div>
 
-      <label for="direction">Filter by Direction</label>
-      <select id="direction">
-  <option value="">None</option>
-  <option value="N">North (N)</option>
-  <option value="E">East (E)</option>
-  <option value="S">South (S)</option>
-  <option value="W">West (W)</option>
-</select>
+  <div class="filters-popup" id="filtersPopup">
+    <button style="float:right; background:none; border:none; font-size:20px; cursor:pointer;" onclick="toggleFilters()">&times;</button>
+    <h3>Filters</h3>
+    <label for="direction">By Direction</label>
+    <select id="direction">
+      <option value="">None</option>
+      <option value="N">North</option>
+      <option value="E">East</option>
+      <option value="S">South</option>
+      <option value="W">West</option>
+    </select>
 
-      <label for="department">Filter by Department</label>
-      <select id="department">
-        <option>None</option>
-        <option>Institue of Education, Arts, and Community</option>
-        <option>Intitue of Health and Wellbeing</option>
-        <option>Institute of Innovation, Sciece and Sustainability</option>
-      </select>
+    <label for="department">By Department</label>
+    <select id="department">
+      <option>None</option>
+      <option>Institute of Education, Arts, and Community</option>
+      <option>Institute of Health and Wellbeing</option>
+      <option>Institute of Innovation, Science and Sustainability</option>
+    </select>
 
-      <button id="applyFiltersBtn">Apply</button>
-      <button id="clearFiltersBtn" style="margin-top: 10px; background-color: #6b7280;">Clear Filters</button>
-
-    </div>
+    <button id="applyFiltersBtn">Apply</button>
+    <button id="clearFiltersBtn" style="margin-top: 8px; background-color: #6b7280;">Clear</button>
   </div>
 
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-  const buildingLocations = {
-  "Aboriginal Education Centre (Building 1S, Level 1)": { lat: -38.31215, lng: 146.42988 },
+    const buildingOptions = {
+      "Aboriginal Education Centre (Building 1S, Level 1)": { lat: -38.31215, lng: 146.42988 },
   "Auditorium (Building 3E)": { lat: -38.31093, lng: 146.43044 },
   "Bistro (Building 2N)": { lat: -38.31136, lng: 146.42903 },
   "Bookshop (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
@@ -367,185 +285,78 @@
   "West Residences (West Res)": { lat: -38.31451, lng: 146.42576 },
   "Student Senate Office (Building 3N)": { lat: -38.31100, lng: 146.42897 },
   "Switchback Gallery (Building 6S)": { lat: -38.31353, lng: 146.43143 },
-};
+ 
+    };
 
-let currentRoute = null;
+    let currentRoute = null;
+    const startSelect = document.getElementById('start');
+    const destSelect = document.getElementById('destination');
+    const directionSelect = document.getElementById('direction');
+    const applyBtn = document.getElementById('applyFiltersBtn');
+    const clearBtn = document.getElementById('clearFiltersBtn');
 
-function generateRoute() {
-  const startName = document.getElementById("start").value;
-  const endName = document.getElementById("destination").value;
-
-  if (!startName || !endName) {
-    alert("Please select both a start and destination.");
-    return;
-  }
-
-  if (!(startName in buildingLocations) || !(endName in buildingLocations)) {
-    alert("Invalid building selected.");
-    return;
-  }
-
-  const start = buildingLocations[startName];
-  const end = buildingLocations[endName];
-
-  // Clear previous route
-  if (currentRoute) {
-    map.removeLayer(currentRoute);
-  }
-
-  // Draw line on the map
-  currentRoute = L.polyline([start, end], {
-    color: 'blue',
-    weight: 5
-  }).addTo(map);
-
-  map.fitBounds(currentRoute.getBounds());
-
-  const routeDescription = document.getElementById("routeDescription");
-  if (routeDescription) {
-    routeDescription.textContent = `Showing route from "${startName}" to "${endName}".`;
-    routeDescription.style.display = 'block';
-  }
-}
-
-  </script>
-  <script>
-  const buildingOptions = [
-    { name: "Aboriginal Education Centre (Building 1S, Level 1)", direction: "S" },
-    { name: "Auditorium (Building 3E)", direction: "E" },
-    { name: "Bistro (Building 2N)", direction: "N" },
-    { name: "Bookshop (Building 4N, Level 1)", direction: "N" },
-    { name: "Cafeteria (Building 2N)", direction: "N" },
-    { name: "Centre for Gippsland Studies (Building 1E, Level 1)", direction: "E" },
-    { name: "CLIPP (Building 1E, Level 1)", direction: "E" },
-    { name: "Chaplain (Building 3N)", direction: "N" },
-    { name: "Clubs and Societies Space (Building 1E, Level 1)", direction: "E" },
-    { name: "Commercial Services Centre (Building 4N, Level 1)", direction: "N" },
-    { name: "Crofton Hatsell Room (Building 2W, Level 2)", direction: "W" },
-    { name: "Fedliving Office (Building 4N, Level 1)", direction: "N" },
-    { name: "GHERG (Building 4W)", direction: "W" },
-    { name: "Kurnai College (Building 5W/6W)", direction: "W" },
-    { name: "Gippsland Enterprise Centre (Building 9N)", direction: "N" },
-    { name: "Gippsland Centre for Arts and Design (Building 6S, Level 1)", direction: "S" },
-    { name: "Grounds Department (Building 5S)", direction: "S" },
-    { name: "Hexagon Theatre (Building 1S, Level 1)", direction: "S" },
-    { name: "ITS Services (Building 1E, Level 2)", direction: "E" },
-    { name: "Leisure Centre (Building LC)", direction: "C" },
-    { name: "Library (Building 1E, Level 1)", direction: "E" },
-    { name: "Link Meeting Room (Building 2W, Level 2)", direction: "W" },
-    { name: "Main Entrance (Building 1W, Level 2)", direction: "W" },
-    { name: "Monash Rural Health (Building 3W, Level 2)", direction: "W" },
-    { name: "Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)", direction: "N" },
-    { name: "Property and Infrastructure (Building 3W)", direction: "W" },
-    { name: "Quiet Space / Prayer Room (Building 1N, Level 1)", direction: "N" },
-    { name: "Logistics and Mail Room (Building 4N)", direction: "N" },
-    { name: "Research and Innovation (Building 2W, Level 2)", direction: "W" },
-    { name: "Student Experience (Building 3N)", direction: "N" },
-    { name: "Student HQ (Building 1S, Level 2, Room 203)", direction: "S" },
-    { name: "Student Lounge (Building 3N)", direction: "N" },
-    { name: "Student Residences – Hall A (HA)", direction: "N" },
-    { name: "Student Residences – Hall B (HB)", direction: "N" },
-    { name: "North Residences (Building 7N)", direction: "N" },
-    { name: "South Residences (South Res)", direction: "S" },
-    { name: "West Residences (West Res)", direction: "W" },
-    { name: "Student Senate Office (Building 3N)", direction: "N" },
-    { name: "Switchback Gallery (Building 6S)", direction: "S" },
-  ];
-
-  const startSelect = document.getElementById("start");
-  const destSelect = document.getElementById("destination");
-  const directionSelect = document.getElementById("direction");
-  const applyBtn = document.getElementById("applyFiltersBtn");
-  const clearBtn = document.getElementById("clearFiltersBtn");
-
-  function populateOptions(selectElement, options) {
-    selectElement.innerHTML = '<option value="">Select</option>';
-    options.forEach(opt => {
-      const option = document.createElement("option");
-      option.textContent = opt.name;
-      option.value = opt.name;
-      selectElement.appendChild(option);
-    });
-  }
-
-  function applyFilters() {
-    const selectedDirection = directionSelect.value;
-
-    if (!selectedDirection) {
-      // If no direction selected, do not filter
-      return;
+    function populateOptions() {
+      startSelect.innerHTML = '<option value="">Select</option>';
+      destSelect.innerHTML = '<option value="">Select</option>';
+      Object.keys(buildingOptions).forEach(name => {
+        let opt1 = document.createElement('option');
+        opt1.value = name; opt1.textContent = name;
+        let opt2 = opt1.cloneNode(true);
+        startSelect.appendChild(opt1);
+        destSelect.appendChild(opt2);
+      });
     }
 
-    const filtered = buildingOptions.filter(b => b.direction === selectedDirection);
-    populateOptions(startSelect, filtered);
-    populateOptions(destSelect, filtered);
-  }
-
-  function clearFilters() {
-    directionSelect.value = "";
-    populateOptions(startSelect, buildingOptions);
-    populateOptions(destSelect, buildingOptions);
-  }
-
-  applyBtn.addEventListener("click", applyFilters);
-  clearBtn.addEventListener("click", clearFilters);
-
-  window.onload = () => {
-    populateOptions(startSelect, buildingOptions);
-    populateOptions(destSelect, buildingOptions);
-  };
-</script>
-
-
-</body>
-</html>
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Federation University Gippsland Campus Live GPS</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0; padding: 0;
+    function generateRoute() {
+      const startName = startSelect.value;
+      const endName = destSelect.value;
+      if (!startName || !endName) {
+        alert("Select both start and destination.");
+        return;
+      }
+      const start = buildingOptions[startName];
+      const end = buildingOptions[endName];
+      if (currentRoute) map.removeLayer(currentRoute);
+      currentRoute = L.polyline([start, end], { color: 'blue', weight: 5 }).addTo(map);
+      map.fitBounds(currentRoute.getBounds());
     }
-    #map {
-      height: 100%;
-      width: 100%;
+
+    function applyFilters() {
+      const dir = directionSelect.value;
+      startSelect.innerHTML = '<option value="">Select</option>';
+      destSelect.innerHTML = '<option value="">Select</option>';
+      Object.entries(buildingOptions).forEach(([name, data]) => {
+        if (!dir || data.direction === dir) {
+          let opt1 = document.createElement('option');
+          opt1.value = name; opt1.textContent = name;
+          let opt2 = opt1.cloneNode(true);
+          startSelect.appendChild(opt1);
+          destSelect.appendChild(opt2);
+        }
+      });
     }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    const southWest = L.latLng(-38.3160, 146.4230);
-const northEast = L.latLng(-38.3095, 146.4330);
-const campusBounds = L.latLngBounds(southWest, northEast);
-window.map = L.map('map', {
-  // maxBounds: campusBounds,
-  // maxBoundsViscosity: 1.0,
-  // minZoom: 17,
-  // maxZoom: 20
-}).setView([-38.3126, 146.4280], 18);
+    function clearFilters() {
+      directionSelect.value = "";
+      populateOptions();
+    }
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+    applyBtn.addEventListener("click", applyFilters);
+    clearBtn.addEventListener("click", clearFilters);
 
+    function toggleFilters() {
+      const popup = document.getElementById("filtersPopup");
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+    }
 
-/*
-    const imageUrl = 'churchill floor plan.jpeg';
-    const imageBounds = [[-38.3095, 146.4235], [-38.3157, 146.4329]];
-    L.imageOverlay(imageUrl, imageBounds).addTo(map);
-*/
+    // Map init
+    const map = L.map('map').setView([-38.3126, 146.4280], 18);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // GPS tracking
     let userMarker, accuracyCircle, headingMarker;
-
     const arrowIcon = L.divIcon({
       className: 'heading-arrow',
       html: '🧭',
@@ -553,18 +364,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       iconAnchor: [15, 15]
     });
 
-    map.locate({ watch: true, setView: true, maxZoom: 20 });
-
+    map.locate({ watch: true, setView: false, maxZoom: 20 });
     map.on("locationfound", function (e) {
       if (!userMarker) {
-        userMarker = L.marker(e.latlng).addTo(map).bindPopup("You are here").openPopup();
-        accuracyCircle = L.circle(e.latlng, {
-  radius: 5,  // much smaller than dynamic accuracy
-  color: '#007bff',
-  fillColor: '#007bff',
-  fillOpacity: 0.3
-}).addTo(map);
-
+        userMarker = L.marker(e.latlng).addTo(map).bindPopup("You are here");
+        accuracyCircle = L.circle(e.latlng, { radius: 5, color: '#007bff', fillColor: '#007bff', fillOpacity: 0.3 }).addTo(map);
         headingMarker = L.marker(e.latlng, { icon: arrowIcon }).addTo(map);
       } else {
         userMarker.setLatLng(e.latlng);
@@ -573,9 +377,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       }
     });
 
-    map.on("locationerror", function (e) {
-      alert("Location error: " + e.message);
-    });
+    map.on("locationerror", e => alert("Location error: " + e.message));
 
     function handleOrientation(event) {
       const heading = event.alpha;
@@ -585,18 +387,17 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     }
 
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission()
-        .then(permissionState => {
-          if (permissionState === 'granted') {
-            window.addEventListener('deviceorientation', handleOrientation, true);
-          }
-        })
-        .catch(console.error);
+      DeviceOrientationEvent.requestPermission().then(state => {
+        if (state === 'granted') {
+          window.addEventListener('deviceorientation', handleOrientation, true);
+        }
+      }).catch(console.error);
     } else {
       window.addEventListener('deviceorientationabsolute', handleOrientation, true);
       window.addEventListener('deviceorientation', handleOrientation, true);
     }
+
+    window.onload = populateOptions;
   </script>
-  <script src="navigation.js"></script>
 </body>
 </html>
