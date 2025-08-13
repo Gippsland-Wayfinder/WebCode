@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Wayfinder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    :root {
+      --fed-blue: #00205b;
+      --fed-blue-light: #0045a0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+      color: #111827;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .header {
+      background-color: #fff;
+      padding: 12px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .header img {
+      height: 40px;
+      margin-right: 8px;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--fed-blue);
+    }
+
+    /* Mobile/Tablet default nav */
+    .nav {
+      background-color: #fff;
+      width: 95%;
+      max-width: 900px;
+      margin-top: 10px;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .nav label {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .nav select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .nav button {
+      background-color: var(--fed-blue);
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .nav button:hover {
+      background-color: var(--fed-blue-light);
+    }
+
+    .icon-button {
+      background-color: #f3f4f6;
+      color: #333;
+      font-size: 14px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .icon-button:hover {
+      background-color: #e5e7eb;
+    }
+
+    #map {
+      flex: 1;
+      height: calc(100vh - 220px);
+      width: 100%;
+    }
+
+    /* Desktop/Laptop layout */
+    @media (min-width: 1024px) {
+      .nav {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0;
+      }
+
+      .nav label {
+        margin: 0;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .nav select {
+        width: auto;
+        min-width: 200px;
+      }
+
+      .nav button,
+      .icon-button {
+        width: auto;
+      }
+
+      #map {
+        height: calc(100vh - 120px);
+      }
+    }
+
+    .filters-popup {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      padding: 16px;
+      width: 280px;
+      z-index: 2000;
+      display: none;
+    }
+
+    .filters-popup h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .filters-popup label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .filters-popup select,
+    .filters-popup button {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .filters-popup button {
+      margin-top: 12px;
+      background-color: var(--fed-blue);
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .filters-popup button:hover {
+      background-color: var(--fed-blue-light);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="FedUniLogo.jpeg" alt="Federation University Logo" />
+    <div class="header-title">CAMPUS WAYFINDER</div>
+  </div>
+
+  <div class="nav">
+    <button onclick="window.location.href='https://www.federation.edu.au/'">← Back</button>
+
+    <label for="start">Start:</label>
+    <select id="start"></select>
+
+    <label for="destination">Destination:</label>
+    <select id="destination"></select>
+
+    <button onclick="generateRoute()">Search</button>
+    <span class="icon-button" onclick="toggleFilters()">☰ Filters</span>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="filters-popup" id="filtersPopup">
+    <button style="float:right; background:none; border:none; font-size:20px; cursor:pointer;" onclick="toggleFilters()">&times;</button>
+    <h3>Filters</h3>
+    <label for="direction">By Direction</label>
+    <select id="direction">
+      <option value="">None</option>
+      <option value="N">North</option>
+      <option value="E">East</option>
+      <option value="S">South</option>
+      <option value="W">West</option>
+    </select>
+
+    <label for="department">By Department</label>
+    <select id="department">
+      <option>None</option>
+      <option>Institute of Education, Arts, and Community</option>
+      <option>Institute of Health and Wellbeing</option>
+      <option>Institute of Innovation, Science and Sustainability</option>
+    </select>
+
+    <button id="applyFiltersBtn">Apply</button>
+    <button id="clearFiltersBtn" style="margin-top: 8px; background-color: #6b7280;">Clear</button>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const buildingOptions = {
+      "Aboriginal Education Centre (Building 1S, Level 1)": { lat: -38.31215, lng: 146.42988 },
+  "Auditorium (Building 3E)": { lat: -38.31093, lng: 146.43044 },
+  "Bistro (Building 2N)": { lat: -38.31136, lng: 146.42903 },
+  "Bookshop (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+  "Cafeteria (Building 2N)": { lat: -38.31136, lng: 146.42903 },
+  "Centre for Gippsland Studies (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "CLIPP (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "Chaplain (Building 3N)": { lat: -38.31101, lng: 146.42898 },
+  "Clubs and Societies Space (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "Commercial Services Centre (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+  "Crofton Hatsell Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+  "Fedliving Office (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+  "GHERG (Building 4W)": { lat: -38.31250, lng: 146.42779 },
+  "Kurnai College (Building 5W/6W)": { lat: -38.31223, lng: 146.42689 },
+  "Gippsland Enterprise Centre (Building 9N)": { lat: -38.30931, lng: 146.42564 },
+  "Gippsland Centre for Arts and Design (Building 6S, Level 1)": { lat: -38.31353, lng: 146.43143 },
+  "Grounds Department (Building 5S)": { lat: -38.31368, lng: 146.43082 },
+  "Hexagon Theatre (Building 1S, Level 1)": { lat: -38.31218, lng: 146.42991 },
+  "ITS Services (Building 1E, Level 2)": { lat: -38.31101, lng: 146.42939 },
+  "Leisure Centre (Building LC)": { lat: -38.31146, lng: 146.42514 },
+  "Library (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+  "Link Meeting Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+  "Main Entrance (Building 1W, Level 2)": { lat: -38.31196, lng: 146.42947 },
+  "Monash Rural Health (Building 3W, Level 2)": { lat: -38.31223, lng: 146.42855 },
+  "Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)": { lat: -38.31127, lng: 146.42947 },
+  "Property and Infrastructure (Building 3W)": { lat: -38.31223, lng: 146.42855 },
+  "Quiet Space / Prayer Room (Building 1N, Level 1)": { lat: -38.31167, lng: 146.42954 },
+  "Logistics and Mail Room (Building 4N)": { lat: -38.31101, lng: 146.42844 },
+  "Research and Innovation (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+  "Student Experience (Building 3N)": { lat: -38.31100, lng: 146.42898 },
+  "Student HQ (Building 1S, Level 2, Room 203)": { lat: -38.31218, lng: 146.42991 },
+  "Student Lounge (Building 3N)": { lat: -38.31101, lng: 146.42898 },
+  "Student Residences – Hall A (HA)": { lat: -38.31111, lng: 146.42597 },
+  "Student Residences – Hall B (HB)": { lat: -38.31314, lng: 146.42653 },
+  "North Residences (Building 7N)": { lat: -38.31042, lng: 146.42880 },
+  "South Residences (South Res)": { lat: -38.31496, lng: 146.42883 },
+  "West Residences (West Res)": { lat: -38.31451, lng: 146.42576 },
+  "Student Senate Office (Building 3N)": { lat: -38.31100, lng: 146.42897 },
+  "Switchback Gallery (Building 6S)": { lat: -38.31353, lng: 146.43143 },
+ 
+    };
+
+    let currentRoute = null;
+    const startSelect = document.getElementById('start');
+    const destSelect = document.getElementById('destination');
+    const directionSelect = document.getElementById('direction');
+    const applyBtn = document.getElementById('applyFiltersBtn');
+    const clearBtn = document.getElementById('clearFiltersBtn');
+
+    function populateOptions() {
+      startSelect.innerHTML = '<option value="">Select</option>';
+      destSelect.innerHTML = '<option value="">Select</option>';
+      Object.keys(buildingOptions).forEach(name => {
+        let opt1 = document.createElement('option');
+        opt1.value = name; opt1.textContent = name;
+        let opt2 = opt1.cloneNode(true);
+        startSelect.appendChild(opt1);
+        destSelect.appendChild(opt2);
+      });
+    }
+
+    function generateRoute() {
+      const startName = startSelect.value;
+      const endName = destSelect.value;
+      if (!startName || !endName) {
+        alert("Select both start and destination.");
+        return;
+      }
+      const start = buildingOptions[startName];
+      const end = buildingOptions[endName];
+      if (currentRoute) map.removeLayer(currentRoute);
+      currentRoute = L.polyline([start, end], { color: 'blue', weight: 5 }).addTo(map);
+      map.fitBounds(currentRoute.getBounds());
+    }
+
+    function applyFilters() {
+      const dir = directionSelect.value;
+      startSelect.innerHTML = '<option value="">Select</option>';
+      destSelect.innerHTML = '<option value="">Select</option>';
+      Object.entries(buildingOptions).forEach(([name, data]) => {
+        if (!dir || data.direction === dir) {
+          let opt1 = document.createElement('option');
+          opt1.value = name; opt1.textContent = name;
+          let opt2 = opt1.cloneNode(true);
+          startSelect.appendChild(opt1);
+          destSelect.appendChild(opt2);
+        }
+      });
+    }
+
+    function clearFilters() {
+      directionSelect.value = "";
+      populateOptions();
+    }
+
+    applyBtn.addEventListener("click", applyFilters);
+    clearBtn.addEventListener("click", clearFilters);
+
+    function toggleFilters() {
+      const popup = document.getElementById("filtersPopup");
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+    }
+
+    // Map init
+    const map = L.map('map').setView([-38.3126, 146.4280], 18);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // GPS tracking
+    let userMarker, accuracyCircle, headingMarker;
+    const arrowIcon = L.divIcon({
+      className: 'heading-arrow',
+      html: '🧭',
+      iconSize: [30, 30],
+      iconAnchor: [15, 15]
+    });
+
+    map.locate({ watch: true, setView: false, maxZoom: 20 });
+    map.on("locationfound", function (e) {
+      if (!userMarker) {
+        userMarker = L.marker(e.latlng).addTo(map).bindPopup("You are here");
+        accuracyCircle = L.circle(e.latlng, { radius: 5, color: '#007bff', fillColor: '#007bff', fillOpacity: 0.3 }).addTo(map);
+        headingMarker = L.marker(e.latlng, { icon: arrowIcon }).addTo(map);
+      } else {
+        userMarker.setLatLng(e.latlng);
+        accuracyCircle.setLatLng(e.latlng).setRadius(e.accuracy);
+        headingMarker.setLatLng(e.latlng);
+      }
+    });
+
+    map.on("locationerror", e => alert("Location error: " + e.message));
+
+    function handleOrientation(event) {
+      const heading = event.alpha;
+      if (heading != null && headingMarker && headingMarker.getElement()) {
+        headingMarker.getElement().style.transform = `rotate(${heading}deg)`;
+      }
+    }
+
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission().then(state => {
+        if (state === 'granted') {
+          window.addEventListener('deviceorientation', handleOrientation, true);
+        }
+      }).catch(console.error);
+    } else {
+      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+      window.addEventListener('deviceorientation', handleOrientation, true);
+    }
+
+    window.onload = populateOptions;
+  </script>
+</body>
+</html>
