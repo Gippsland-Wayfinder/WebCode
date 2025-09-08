@@ -379,26 +379,52 @@
 
     map.on("locationerror", e => alert("Location error: " + e.message));
 
-    function handleOrientation(event) {
-      const heading = event.alpha;
-      if (heading != null && headingMarker && headingMarker.getElement()) {
-        headingMarker.getElement().style.transform = `rotate(${heading}deg)`;
-      }
-    }
+    // --- Smooth scanning direction setup ---
+  let currentHeading = 0;  // current displayed angle
+  let targetHeading = 0;   // compass target angle
 
-    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission().then(state => {
-        if (state === 'granted') {
-          window.addEventListener('deviceorientation', handleOrientation, true);
-        }
-      }).catch(console.error);
-    } else {
-      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-      window.addEventListener('deviceorientation', handleOrientation, true);
+  // Smooth animation loop
+  function animateHeading() {
+    if (headingMarker && headingMarker.getElement()) {
+      // find shortest rotation direction
+      let diff = targetHeading - currentHeading;
+      diff = (diff + 540) % 360 - 180; // normalize between -180 and 180
+
+      // move a fraction toward the target (scan effect)
+      currentHeading += diff * 0.05; // lower = slower scan
+      currentHeading = (currentHeading + 360) % 360;
+
+      headingMarker.getElement().style.transform =
+        `rotate(${currentHeading}deg) translate(-50%, -50%)`;
     }
+    requestAnimationFrame(animateHeading);
+  }
+
+  // Orientation listener: updates the target angle only
+  function handleOrientation(event) {
+    targetHeading = event.webkitCompassHeading || event.alpha || 0;
+  }
+
+  // Permission + event setup (iOS / Android)
+  if (typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function") {
+    DeviceOrientationEvent.requestPermission().then(state => {
+      if (state === "granted") {
+        window.addEventListener("deviceorientation", handleOrientation, true);
+      }
+    }).catch(console.error);
+  } else {
+    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+    window.addEventListener("deviceorientation", handleOrientation, true);
+  }
+
+  // Start animation loop
+  animateHeading();
+
 
     window.onload = populateOptions;
   </script>
 </body>
 </html>
+
 
