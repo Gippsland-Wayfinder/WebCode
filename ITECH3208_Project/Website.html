@@ -194,6 +194,19 @@
     .filters-popup button:hover {
       background-color: var(--fed-blue-light);
     }
+
+    #enableCompassBtn {
+      position: absolute;
+      bottom: 100px;
+      right: 20px;
+      z-index: 3000;
+      background: #00205b;
+      color: white;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -216,6 +229,8 @@
   </div>
 
   <div id="map"></div>
+
+  <button id="enableCompassBtn">Enable Compass</button>
 
   <div class="filters-popup" id="filtersPopup">
     <button style="float:right; background:none; border:none; font-size:20px; cursor:pointer;" onclick="toggleFilters()">&times;</button>
@@ -242,6 +257,7 @@
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-polylinegradient/leaflet.polylinegradient.min.js"></script>
   <script>
     const buildingOptions = {
       "Aboriginal Education Centre (Building 1S, Level 1)": { lat: -38.31215, lng: 146.42988 },
@@ -286,8 +302,6 @@
     };
 
     let currentRoute = null;
-    let userMarker, accuracyCircle, coneLayer;
-
     const startSelect = document.getElementById('start');
     const destSelect = document.getElementById('destination');
     const directionSelect = document.getElementById('direction');
@@ -316,7 +330,21 @@
       const start = buildingOptions[startName];
       const end = buildingOptions[endName];
       if (currentRoute) map.removeLayer(currentRoute);
-      currentRoute = L.polyline([start, end], { color: 'blue', weight: 5 }).addTo(map);
+
+      // Gradient polyline
+      currentRoute = L.polyline([start, end], {
+        weight: 6,
+        opacity: 1
+      }).addTo(map);
+
+      currentRoute.setStyle({
+        gradient: {
+          0.0: "green",
+          0.5: "blue",
+          1.0: "red"
+        }
+      });
+
       map.fitBounds(currentRoute.getBounds());
     }
 
@@ -354,23 +382,10 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // GPS tracking
-    map.locate({ watch: true, setView: false, maxZoom: 20 });
-    map.on("locationfound", function (e) {
-      if (!userMarker) {
-        userMarker = L.marker(e.latlng).addTo(map).bindPopup("You are here");
-        accuracyCircle = L.circle(e.latlng, { radius: 5, color: '#007bff', fillColor: '#007bff', fillOpacity: 0.3 }).addTo(map);
-      } else {
-        userMarker.setLatLng(e.latlng);
-        accuracyCircle.setLatLng(e.latlng).setRadius(e.accuracy);
-      }
-    });
-
-    map.on("locationerror", e => alert("Location error: " + e.message));
-
-    // --- Directional Cone Setup ---
+    // --- GPS + Directional Cone ---
+    let userMarker, accuracyCircle, coneLayer;
     const coneRadius = 30;   // meters
-    const coneAngle = 60;    // degrees wide
+    const coneAngle = 60;    // degrees
 
     function degreesToRadians(deg) {
       return deg * Math.PI / 180;
@@ -380,7 +395,6 @@
       const latlngs = [];
       const halfAngle = coneAngle / 2;
       latlngs.push(center);
-
       for (let a = -halfAngle; a <= halfAngle; a += 5) {
         const angle = degreesToRadians(heading + a);
         const dx = coneRadius * Math.sin(angle);
@@ -392,12 +406,19 @@
         );
         latlngs.push(point);
       }
-
       return latlngs;
     }
 
     function handleOrientation(event) {
-      const heading = event.webkitCompassHeading || event.alpha || 0;
+      let heading;
+      if (event.webkitCompassHeading) {
+        heading = event.webkitCompassHeading; // iOS
+      } else if (event.absolute && event.alpha !== null) {
+        heading = 360 - event.alpha; // Android
+      } else {
+        return;
+      }
+
       if (userMarker) {
         const center = userMarker.getLatLng();
         const conePoints = computeConePoints(center, heading);
@@ -414,19 +435,43 @@
       }
     }
 
-    if (typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function") {
-      DeviceOrientationEvent.requestPermission().then(state => {
-        if (state === "granted") {
-          window.addEventListener("deviceorientation", handleOrientation, true);
-        }
-      }).catch(console.error);
-    } else {
-      window.addEventListener("deviceorientationabsolute", handleOrientation, true);
-      window.addEventListener("deviceorientation", handleOrientation, true);
-    }
+    // Enable Compass Button
+    const enableBtn = document.getElementById("enableCompassBtn");
+    enableBtn.addEventListener("click", () => {
+      if (typeof DeviceOrientationEvent !== "undefined" &&
+          typeof DeviceOrientationEvent.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission()
+          .then(state => {
+            if (state === "granted") {
+              window.addEventListener("deviceorientation", handleOrientation, true);
+              enableBtn.style.display = "none";
+            } else {
+              alert("Compass access denied.");
+            }
+          })
+          .catch(console.error);
+      } else {
+        // Android / Desktop
+        window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+        window.addEventListener("deviceorientation", handleOrientation, true);
+        enableBtn.style.display = "none";
+      }
+    });
 
-    window.onload = populateOptions;
+    map.locate({ watch: true, setView: false, maxZoom: 20 });
+    map.on("locationfound", function (e) {
+      if (!userMarker) {
+        userMarker = L.marker(e.latlng).addTo(map).bindPopup("You are here");
+        accuracyCircle = L.circle(e.latlng, { radius: 5, color: '#007bff', fillColor: '#007bff', fillOpacity: 0.3 }).addTo(map);
+      } else {
+        userMarker.setLatLng(e.latlng);
+        accuracyCircle.setLatLng(e.latlng).setRadius(e.accuracy);
+      }
+    });
+
+    map.on("locationerror", e => alert("Location error: " + e.message));
+
+    populateOptions();
   </script>
 </body>
 </html>
