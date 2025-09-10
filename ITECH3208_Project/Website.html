@@ -49,7 +49,6 @@
       color: var(--fed-blue);
     }
 
-    /* Mobile/Tablet default nav */
     .nav {
       background-color: #fff;
       width: 95%;
@@ -114,7 +113,6 @@
       width: 100%;
     }
 
-    /* Desktop/Laptop layout */
     @media (min-width: 1024px) {
       .nav {
         flex-direction: row;
@@ -247,48 +245,49 @@
   <script>
     const buildingOptions = {
       "Aboriginal Education Centre (Building 1S, Level 1)": { lat: -38.31215, lng: 146.42988 },
-  "Auditorium (Building 3E)": { lat: -38.31093, lng: 146.43044 },
-  "Bistro (Building 2N)": { lat: -38.31136, lng: 146.42903 },
-  "Bookshop (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
-  "Cafeteria (Building 2N)": { lat: -38.31136, lng: 146.42903 },
-  "Centre for Gippsland Studies (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
-  "CLIPP (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
-  "Chaplain (Building 3N)": { lat: -38.31101, lng: 146.42898 },
-  "Clubs and Societies Space (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
-  "Commercial Services Centre (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
-  "Crofton Hatsell Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
-  "Fedliving Office (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
-  "GHERG (Building 4W)": { lat: -38.31250, lng: 146.42779 },
-  "Kurnai College (Building 5W/6W)": { lat: -38.31223, lng: 146.42689 },
-  "Gippsland Enterprise Centre (Building 9N)": { lat: -38.30931, lng: 146.42564 },
-  "Gippsland Centre for Arts and Design (Building 6S, Level 1)": { lat: -38.31353, lng: 146.43143 },
-  "Grounds Department (Building 5S)": { lat: -38.31368, lng: 146.43082 },
-  "Hexagon Theatre (Building 1S, Level 1)": { lat: -38.31218, lng: 146.42991 },
-  "ITS Services (Building 1E, Level 2)": { lat: -38.31101, lng: 146.42939 },
-  "Leisure Centre (Building LC)": { lat: -38.31146, lng: 146.42514 },
-  "Library (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
-  "Link Meeting Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
-  "Main Entrance (Building 1W, Level 2)": { lat: -38.31196, lng: 146.42947 },
-  "Monash Rural Health (Building 3W, Level 2)": { lat: -38.31223, lng: 146.42855 },
-  "Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)": { lat: -38.31127, lng: 146.42947 },
-  "Property and Infrastructure (Building 3W)": { lat: -38.31223, lng: 146.42855 },
-  "Quiet Space / Prayer Room (Building 1N, Level 1)": { lat: -38.31167, lng: 146.42954 },
-  "Logistics and Mail Room (Building 4N)": { lat: -38.31101, lng: 146.42844 },
-  "Research and Innovation (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
-  "Student Experience (Building 3N)": { lat: -38.31100, lng: 146.42898 },
-  "Student HQ (Building 1S, Level 2, Room 203)": { lat: -38.31218, lng: 146.42991 },
-  "Student Lounge (Building 3N)": { lat: -38.31101, lng: 146.42898 },
-  "Student Residences – Hall A (HA)": { lat: -38.31111, lng: 146.42597 },
-  "Student Residences – Hall B (HB)": { lat: -38.31314, lng: 146.42653 },
-  "North Residences (Building 7N)": { lat: -38.31042, lng: 146.42880 },
-  "South Residences (South Res)": { lat: -38.31496, lng: 146.42883 },
-  "West Residences (West Res)": { lat: -38.31451, lng: 146.42576 },
-  "Student Senate Office (Building 3N)": { lat: -38.31100, lng: 146.42897 },
-  "Switchback Gallery (Building 6S)": { lat: -38.31353, lng: 146.43143 },
-
+      "Auditorium (Building 3E)": { lat: -38.31093, lng: 146.43044 },
+      "Bistro (Building 2N)": { lat: -38.31136, lng: 146.42903 },
+      "Bookshop (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+      "Cafeteria (Building 2N)": { lat: -38.31136, lng: 146.42903 },
+      "Centre for Gippsland Studies (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+      "CLIPP (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+      "Chaplain (Building 3N)": { lat: -38.31101, lng: 146.42898 },
+      "Clubs and Societies Space (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+      "Commercial Services Centre (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+      "Crofton Hatsell Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+      "Fedliving Office (Building 4N, Level 1)": { lat: -38.31101, lng: 146.42844 },
+      "GHERG (Building 4W)": { lat: -38.31250, lng: 146.42779 },
+      "Kurnai College (Building 5W/6W)": { lat: -38.31223, lng: 146.42689 },
+      "Gippsland Enterprise Centre (Building 9N)": { lat: -38.30931, lng: 146.42564 },
+      "Gippsland Centre for Arts and Design (Building 6S, Level 1)": { lat: -38.31353, lng: 146.43143 },
+      "Grounds Department (Building 5S)": { lat: -38.31368, lng: 146.43082 },
+      "Hexagon Theatre (Building 1S, Level 1)": { lat: -38.31218, lng: 146.42991 },
+      "ITS Services (Building 1E, Level 2)": { lat: -38.31101, lng: 146.42939 },
+      "Leisure Centre (Building LC)": { lat: -38.31146, lng: 146.42514 },
+      "Library (Building 1E, Level 1)": { lat: -38.31101, lng: 146.42939 },
+      "Link Meeting Room (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+      "Main Entrance (Building 1W, Level 2)": { lat: -38.31196, lng: 146.42947 },
+      "Monash Rural Health (Building 3W, Level 2)": { lat: -38.31223, lng: 146.42855 },
+      "Parenting Rooms (Building 1N, Level 1 / 1E, Level 1)": { lat: -38.31127, lng: 146.42947 },
+      "Property and Infrastructure (Building 3W)": { lat: -38.31223, lng: 146.42855 },
+      "Quiet Space / Prayer Room (Building 1N, Level 1)": { lat: -38.31167, lng: 146.42954 },
+      "Logistics and Mail Room (Building 4N)": { lat: -38.31101, lng: 146.42844 },
+      "Research and Innovation (Building 2W, Level 2)": { lat: -38.31190, lng: 146.42886 },
+      "Student Experience (Building 3N)": { lat: -38.31100, lng: 146.42898 },
+      "Student HQ (Building 1S, Level 2, Room 203)": { lat: -38.31218, lng: 146.42991 },
+      "Student Lounge (Building 3N)": { lat: -38.31101, lng: 146.42898 },
+      "Student Residences – Hall A (HA)": { lat: -38.31111, lng: 146.42597 },
+      "Student Residences – Hall B (HB)": { lat: -38.31314, lng: 146.42653 },
+      "North Residences (Building 7N)": { lat: -38.31042, lng: 146.42880 },
+      "South Residences (South Res)": { lat: -38.31496, lng: 146.42883 },
+      "West Residences (West Res)": { lat: -38.31451, lng: 146.42576 },
+      "Student Senate Office (Building 3N)": { lat: -38.31100, lng: 146.42897 },
+      "Switchback Gallery (Building 6S)": { lat: -38.31353, lng: 146.43143 }
     };
 
     let currentRoute = null;
+    let userMarker, accuracyCircle, coneLayer;
+
     const startSelect = document.getElementById('start');
     const destSelect = document.getElementById('destination');
     const directionSelect = document.getElementById('direction');
@@ -356,45 +355,75 @@
     }).addTo(map);
 
     // GPS tracking
-    let userMarker, accuracyCircle, headingMarker;
-    const arrowIcon = L.divIcon({
-      className: 'heading-arrow',
-      html: '🧭',
-      iconSize: [30, 30],
-      iconAnchor: [15, 15]
-    });
-
     map.locate({ watch: true, setView: false, maxZoom: 20 });
     map.on("locationfound", function (e) {
       if (!userMarker) {
         userMarker = L.marker(e.latlng).addTo(map).bindPopup("You are here");
         accuracyCircle = L.circle(e.latlng, { radius: 5, color: '#007bff', fillColor: '#007bff', fillOpacity: 0.3 }).addTo(map);
-        headingMarker = L.marker(e.latlng, { icon: arrowIcon }).addTo(map);
       } else {
         userMarker.setLatLng(e.latlng);
         accuracyCircle.setLatLng(e.latlng).setRadius(e.accuracy);
-        headingMarker.setLatLng(e.latlng);
       }
     });
 
     map.on("locationerror", e => alert("Location error: " + e.message));
 
+    // --- Directional Cone Setup ---
+    const coneRadius = 30;   // meters
+    const coneAngle = 60;    // degrees wide
+
+    function degreesToRadians(deg) {
+      return deg * Math.PI / 180;
+    }
+
+    function computeConePoints(center, heading) {
+      const latlngs = [];
+      const halfAngle = coneAngle / 2;
+      latlngs.push(center);
+
+      for (let a = -halfAngle; a <= halfAngle; a += 5) {
+        const angle = degreesToRadians(heading + a);
+        const dx = coneRadius * Math.sin(angle);
+        const dy = coneRadius * Math.cos(angle);
+
+        const point = L.latLng(
+          center.lat + (dy / 111111),
+          center.lng + (dx / (111111 * Math.cos(center.lat * Math.PI/180)))
+        );
+        latlngs.push(point);
+      }
+
+      return latlngs;
+    }
+
     function handleOrientation(event) {
-      const heading = event.alpha;
-      if (heading != null && headingMarker && headingMarker.getElement()) {
-        headingMarker.getElement().style.transform = `rotate(${heading}deg)`;
+      const heading = event.webkitCompassHeading || event.alpha || 0;
+      if (userMarker) {
+        const center = userMarker.getLatLng();
+        const conePoints = computeConePoints(center, heading);
+        if (!coneLayer) {
+          coneLayer = L.polygon(conePoints, {
+            color: "#00205b",
+            fillColor: "#3b82f6",
+            fillOpacity: 0.25,
+            weight: 1
+          }).addTo(map);
+        } else {
+          coneLayer.setLatLngs(conePoints);
+        }
       }
     }
 
-    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    if (typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function") {
       DeviceOrientationEvent.requestPermission().then(state => {
-        if (state === 'granted') {
-          window.addEventListener('deviceorientation', handleOrientation, true);
+        if (state === "granted") {
+          window.addEventListener("deviceorientation", handleOrientation, true);
         }
       }).catch(console.error);
     } else {
-      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-      window.addEventListener('deviceorientation', handleOrientation, true);
+      window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+      window.addEventListener("deviceorientation", handleOrientation, true);
     }
 
     window.onload = populateOptions;
