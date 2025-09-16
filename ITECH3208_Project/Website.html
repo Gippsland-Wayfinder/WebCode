@@ -377,11 +377,16 @@
     }
 
     // Map init
-    const map = L.map('map').setView([-38.3126, 146.4280], 18);
+    const map = L.map('map',{
+      maxBounds: [[-38.3094,146.42321],[-38.31565,146.43198]],
+      maxBoundsViscosity:1.0,
+      minZoom:17.2
+    }).setView([-38.3126, 146.4280], 18);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-
+    L.imageOverlay("./FedUniPDF.png", [[-38.3094,146.42321],[-38.31565,146.43198]]).addTo(map);
+    
     // --- GPS + Directional Cone ---
     let userMarker, accuracyCircle, coneLayer;
     const coneRadius = 30;   // meters
