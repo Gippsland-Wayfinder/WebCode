@@ -302,6 +302,8 @@
     };
 
     let currentRoute = null;
+    let startMarker = null;
+    let destMarker = null; 
     const startSelect = document.getElementById('start');
     const destSelect = document.getElementById('destination');
     const directionSelect = document.getElementById('direction');
@@ -344,10 +346,23 @@
           1.0: "red"
         }
       });
-
-      map.fitBounds(currentRoute.getBounds());
-    }
-
+    const startIcon = L.divIcon({
+    className: "custom-start-icon",
+    html: '<div style="width:16px;height:16px;background:#007bff;border:3px solid #fff;border-radius:50%;"></div>',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
+  if (startMarker) map.removeLayer(startMarker);
+  startMarker = L.marker(start, { icon: startIcon }).addTo(map).bindPopup("Start: " + startName);
+   const destIcon = L.icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+    iconSize: [35, 35],
+    iconAnchor: [17, 35]
+  });
+  if (destMarker) map.removeLayer(destMarker);
+  destMarker = L.marker(end, { icon: destIcon }).addTo(map).bindPopup("Destination: " + endName);
+  map.fitBounds(currentRoute.getBounds());
+  }
     function applyFilters() {
       const dir = directionSelect.value;
       startSelect.innerHTML = '<option value="">Select</option>';
@@ -480,4 +495,5 @@
   </script>
 </body>
 </html>
+
 
