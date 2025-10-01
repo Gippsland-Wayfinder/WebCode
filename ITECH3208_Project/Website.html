@@ -275,7 +275,7 @@
 /* Screen-reader only helper */
 .sr-only {
   position: absolute !important; height: 1px; width: 1px; overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; border: 0; padding: 0; margin: -1px;
+  clip: rect(1px, 1px, 1px); white-space: nowrap; border: 0; padding: 0; margin: -1px;
 }
   </style>
 </head>
@@ -295,6 +295,9 @@
     <select id="destination"></select>
 
     <button onclick="generateRoute()">Search</button>
+    <!-- ▼▼ Added: Clear route button (hidden until a route exists) -->
+    <button id="clearRouteBtn" class="icon-button" style="display:none;" onclick="clearRoute()">Clear route</button>
+    <!-- ▲▲ -->
     <span class="icon-button" onclick="toggleFilters()">☰ Filters</span>
   </div>
 
@@ -379,6 +382,8 @@
     const directionSelect = document.getElementById('direction');
     const applyBtn = document.getElementById('applyFiltersBtn');
     const clearBtn = document.getElementById('clearFiltersBtn');
+    // ▼ Added: cache clear button
+    const clearRouteBtn = document.getElementById('clearRouteBtn');
 
     function populateOptions() {
       startSelect.innerHTML = '<option value="">Select</option>';
@@ -416,23 +421,45 @@
           1.0: "red"
         }
       });
-    const startIcon = L.divIcon({
-    className: "custom-start-icon",
-    html: '<div style="width:16px;height:16px;background:#007bff;border:3px solid #fff;border-radius:50%;"></div>',
-    iconSize: [16, 16],
-    iconAnchor: [8, 8]
-  });
-  if (startMarker) map.removeLayer(startMarker);
-  startMarker = L.marker(start, { icon: startIcon }).addTo(map).bindPopup("Start: " + startName);
-   const destIcon = L.icon({
-    iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-    iconSize: [35, 35],
-    iconAnchor: [17, 35]
-  });
-  if (destMarker) map.removeLayer(destMarker);
-  destMarker = L.marker(end, { icon: destIcon }).addTo(map).bindPopup("Destination: " + endName);
-  map.fitBounds(currentRoute.getBounds());
-  }
+      const startIcon = L.divIcon({
+        className: "custom-start-icon",
+        html: '<div style="width:16px;height:16px;background:#007bff;border:3px solid #fff;border-radius:50%;"></div>',
+        iconSize: [16, 16],
+        iconAnchor: [8, 8]
+      });
+      if (startMarker) map.removeLayer(startMarker);
+      startMarker = L.marker(start, { icon: startIcon }).addTo(map).bindPopup("Start: " + startName);
+
+      const destIcon = L.icon({
+        iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+        iconSize: [35, 35],
+        iconAnchor: [17, 35]
+      });
+      if (destMarker) map.removeLayer(destMarker);
+      destMarker = L.marker(end, { icon: destIcon }).addTo(map).bindPopup("Destination: " + endName);
+
+      map.fitBounds(currentRoute.getBounds());
+
+      // ▼ Show the Clear route button when a route exists
+      clearRouteBtn.style.display = 'inline-block';
+    }
+
+    // ▼ Added: clear route logic
+    function clearRoute() {
+      // remove the drawn path
+      if (currentRoute) { map.removeLayer(currentRoute); currentRoute = null; }
+      // remove start/destination markers
+      if (startMarker) { map.removeLayer(startMarker); startMarker = null; }
+      if (destMarker)  { map.removeLayer(destMarker);  destMarker  = null; }
+      // reset dropdowns
+      startSelect.selectedIndex = 0;
+      destSelect.selectedIndex  = 0;
+      // hide the button again
+      clearRouteBtn.style.display = 'none';
+      // optional: recentre to default campus view
+      map.setView([-38.3126, 146.4280], 18);
+    }
+
     function applyFilters() {
       const dir = directionSelect.value;
       startSelect.innerHTML = '<option value="">Select</option>';
@@ -680,7 +707,3 @@
 
 </body>
 </html>
-
-
-
-
